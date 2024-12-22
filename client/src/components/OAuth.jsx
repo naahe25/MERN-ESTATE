@@ -1,7 +1,7 @@
 import { GoogleAuthProvider, getAuth, signInWithPopup } from "firebase/auth";
 import { app } from "../firebase.js";
 import { useDispatch } from "react-redux";
-import {signInSuccess} from "../redux/user/userSlice.js";
+import { signInSuccess } from "../redux/user/userSlice.js";
 import { useNavigate } from "react-router-dom";
 
 
@@ -16,7 +16,7 @@ const OAuth = () => {
             const auth = getAuth(app);
 
             const result = await signInWithPopup(auth, provider);
-            
+
             const res = await fetch("/api/auth/google", {
                 method: "POST",
                 headers: {
@@ -32,20 +32,20 @@ const OAuth = () => {
             const data = await res.json();
 
             dispatch(signInSuccess(data));
-            navigate("/");         
+            navigate("/");
 
-            
+
         } catch (error) {
             console.log('Could not sign in with Google', error);
         }
     };
 
 
-  return (
-    <button onClick={handleGoogleClick} type="button" className="bg-red-700 text-white p-3 rounded-lg uppercase hover:opacity-95">
-      Continue with Google
-    </button>
-  )
+    return (
+        <button onClick={handleGoogleClick} type="button" className="bg-red-700 text-white p-3 rounded-lg uppercase hover:opacity-95">
+            Continue with Google
+        </button>
+    )
 };
 
 export default OAuth;
