@@ -13,9 +13,14 @@ const OAuth = () => {
     const handleGoogleClick = async () => {
         try {
             const provider = new GoogleAuthProvider();
+            provider.addScope('profile'); // Add profile scope to fetch profile picture
+            provider.addScope('email');
             const auth = getAuth(app);
 
             const result = await signInWithPopup(auth, provider);
+            const user = result.user;
+
+            console.log("User  Object:", user);
 
             const res = await fetch("/api/auth/google", {
                 method: "POST",
