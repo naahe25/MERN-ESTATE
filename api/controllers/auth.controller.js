@@ -37,7 +37,7 @@ export const signin = async (req, res, next) => {
 };
 
 export const google = async (req, res, next) => {
-  console.log("Received data:", req.body);
+  console.log("Received data:", req.body); // Log the received data
   try {
     const user = await User.findOne({ email: req.body.email });
     if (user) {

@@ -20,7 +20,7 @@ const OAuth = () => {
             const result = await signInWithPopup(auth, provider);
             const user = result.user;
 
-            console.log("User  Object:", user);
+            console.log("User Object:", user);
 
             const res = await fetch("/api/auth/google", {
                 method: "POST",
@@ -28,9 +28,9 @@ const OAuth = () => {
                     "Content-Type": "application/json",
                 },
                 body: JSON.stringify({
-                    name: result.user.displayName,
-                    email: result.user.email,
-                    photo: result.user.photoURL,
+                    name: user.displayName,
+                    email: user.email,
+                    photo: user.photoURL, // Fetch profile picture
                 }),
             });
 
