@@ -49,8 +49,8 @@ export const google = async (req, res, next) => {
     } else {
       const generatedPassword =
         Math.random().toString(36).slice(-8) +
-        Math.random().toString(36).slice(-8);
-      const hashedPassword = bcryptjs.hashSync(generatedPassword, 10);
+        Math.random().toString(36).slice(-8); //these two means it will create a 16 digit random generated password.
+      const hashedPassword = bcryptjs.hashSync(generatedPassword, 10); //hashing the password so that no one can decrypt it.
       const newUser = new User({
         username:
           req.body.name.split(" ").join("").toLowerCase() +
@@ -62,7 +62,7 @@ export const google = async (req, res, next) => {
 
       await newUser.save();
       const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET);
-      const { password:pass, ...rest } = newUser._doc;
+      const { password: pass, ...rest } = newUser._doc;
       res
         .cookie("access_token", token, { httpOnly: true })
         .status(200)
@@ -73,9 +73,9 @@ export const google = async (req, res, next) => {
   }
 };
 
-export const signOut = async (req, res, next) => {  
+export const signOut = async (req, res, next) => {
   try {
-    res.clearCookie('access_token');
+    res.clearCookie("access_token");
     res.status(200).json("User has been logged out!");
   } catch (error) {
     next(error);
