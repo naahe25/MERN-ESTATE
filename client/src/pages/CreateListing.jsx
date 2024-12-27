@@ -122,6 +122,7 @@ const CreateListing = () => {
       <h1 className="text-3xl font-semibold text-center my-7">Create Listing</h1>
       <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-6">
         <div className="flex flex-col gap-4 flex-1">
+          <label htmlFor="name">Enter the name of the listing:</label>
           <input
             type="text"
             id="name"
@@ -131,6 +132,7 @@ const CreateListing = () => {
             required
             className="border p-2"
           />
+          <label htmlFor="description">Provide a description of the listing:</label>
           <textarea
             id="description"
             value={formData.description}
@@ -139,6 +141,7 @@ const CreateListing = () => {
             required
             className="border p-2"
           />
+          <label htmlFor="address">Enter the address of the property:</label>
           <input
             type="text"
             id="address"
@@ -148,6 +151,7 @@ const CreateListing = () => {
             required
             className="border p-2"
           />
+          <label>Choose the type of listing:</label>
           <div className="flex gap-4">
             <input
               type="radio"
@@ -166,6 +170,7 @@ const CreateListing = () => {
             />
             <label htmlFor="rent">Rent</label>
           </div>
+          <label htmlFor="bedrooms">Number of bedrooms:</label>
           <input
             type="number"
             id="bedrooms"
@@ -175,6 +180,7 @@ const CreateListing = () => {
             required
             className="border p-2"
           />
+          <label htmlFor="bathrooms">Number of bathrooms:</label>
           <input
             type="number"
             id="bathrooms"
@@ -184,6 +190,7 @@ const CreateListing = () => {
             required
             className="border p-2"
           />
+          <label htmlFor="regularPrice">Regular price:</label>
           <input
             type="number"
             id="regularPrice"
@@ -193,6 +200,7 @@ const CreateListing = () => {
             required
             className="border p-2"
           />
+          <label htmlFor="discountPrice">Discount price (if any):</label>
           <input
             type="number"
             id="discountPrice"
@@ -201,6 +209,7 @@ const CreateListing = () => {
             placeholder="Discount Price"
             className="border p-2"
           />
+          <label>Additional features:</label>
           <div className="flex gap-4">
             <input
               type="checkbox"
@@ -224,6 +233,7 @@ const CreateListing = () => {
             />
             <label htmlFor="furnished">Furnished</label>
           </div>
+          <label htmlFor="files">Upload images of the property:</label>
           <input
             type="file"
             multiple
