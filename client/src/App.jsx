@@ -3,7 +3,9 @@ import React from 'react'
 
 const App = props => {
   return (
-    <div>AMar Mata</div>
+    <div className='text-blue-500'>
+      <h1>Hello</h1>
+    </div>
   )
 }
 

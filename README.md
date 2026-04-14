@@ -1,4 +1,5 @@
-
+All Commands Used:
+__________________
 
 npm create vite@latest client (installing vite framework)
 
@@ -13,3 +14,5 @@ npm install @vitejs/plugin-react  # if missing
 npx tailwindcss init -p  # optional for v3, skip for v4
 
 npm run dev
+
+
