@@ -1,18 +1,22 @@
-All Commands Used:
-__________________
+# Vite Client Setup
+____________________
+npm create vite@latest client
+cd client
+npm install
 
-npm create vite@latest client (installing vite framework)
-
-npm i (for node modules)
-
+# TailwindCSS Setup
+____________________
 npm install tailwindcss @tailwindcss/vite
-
 npm install -D tailwindcss postcss autoprefixer
 
-npm install @vitejs/plugin-react  # if missing
+# React Plugin (if missing)
+____________________________
+npm install @vitejs/plugin-react
 
-npx tailwindcss init -p  # optional for v3, skip for v4
+# Tailwind Config (optional for v3, skip for v4)
+_________________________________________________
+npx tailwindcss init -p
 
+# Run Development Server
+_________________________
 npm run dev
-
-
