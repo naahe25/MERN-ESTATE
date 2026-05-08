@@ -15,6 +15,7 @@ import { useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
 import axios from "axios"; // Import axios for HTTP requests
 import { DEFAULT_AVATAR, getAvatarUrl } from "../utils/avatar.js";
+import { parseApiResponse } from "../utils/apiResponse.js";
 
 const Profile = () => {
     const fileRef = useRef(null);
@@ -140,15 +141,15 @@ const Profile = () => {
                 method: "DELETE",
             });
 
-            const data = await res.json();
-            if (data.success === false) {
-                console.log(error.message);
+            const data = await parseApiResponse(res);
+            if (!res.ok || data?.success === false) {
+                setShowListingsError(data?.message || "Could not delete listing");
                 return;
             }
 
             setUserListings((prev) => prev.filter((listing) => listing._id !== listingId));
         } catch (error) {
-            console.log(error.message);
+            setShowListingsError(error.message);
         }
     };
 
@@ -250,7 +251,11 @@ const Profile = () => {
                 Show Listings
             </button>
             <p className="text-red-700 mt-5">
-                {showListingsError ? "Error showing listings" : ""}
+                {showListingsError
+                    ? typeof showListingsError === "string"
+                        ? showListingsError
+                        : "Error showing listings"
+                    : ""}
             </p>
 
             {userListings && userListings.length > 0 && (

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { Swiper, SwiperSlide } from "swiper/react";
 import SwiperCore from "swiper";
 import { Navigation } from "swiper/modules";
@@ -153,7 +153,26 @@ const Listing = () => {
                             <button
                                 onClick={() => setContact(true)}
                                 className="bg-slate-700 text-white rounded-lg uppercase p-3 hover:opacity-95"
-                            >Contact Landlord</button>
+                            >
+                                {listing.type === "rent"
+                                    ? "Contact Landlord / Send Rent Request"
+                                    : "Contact Seller / Send Buy Request"}
+                            </button>
+                        )}
+
+                        {!currentUser && (
+                            <Link
+                                to="/sign-in"
+                                className="bg-slate-700 text-white rounded-lg uppercase p-3 hover:opacity-95 text-center"
+                            >
+                                Sign in to contact seller
+                            </Link>
+                        )}
+
+                        {currentUser && listing.userRef === currentUser._id && (
+                            <p className="text-slate-600">
+                                This is your listing. Buyer and renter requests will appear in your profile.
+                            </p>
                         )}
 
                         {contact && <Contact listing={listing} />}
