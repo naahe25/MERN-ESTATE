@@ -26,6 +26,7 @@ if (!process.env.MONGO) {
 const __dirname = path.resolve();
 
 const app = express();
+const PORT = process.env.PORT || 3000;
 app.use(express.json());
 app.use(cookieParser());
 
@@ -41,8 +42,8 @@ const requireDatabase = (req, res, next) => {
   next();
 };
 
-app.listen(3000, () => {
-  console.log("Server is running on port 3000");
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
 });
 
 app.use("/api/user", requireDatabase, userRouter);
