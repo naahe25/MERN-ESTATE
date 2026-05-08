@@ -1,6 +1,7 @@
 import { useNavigate, Link } from "react-router-dom";
 import React, { useState } from "react";
 import OAuth from "../components/OAuth";
+import { parseApiResponse } from "../utils/apiResponse.js";
 
 const SignUp = () => {
 
@@ -26,12 +27,12 @@ const SignUp = () => {
                 },
                 body: JSON.stringify(formData),
             });
-            const data = await res.json();
+            const data = await parseApiResponse(res);
             console.log(data);
 
-            if (data.success == false) {
+            if (!res.ok || data?.success == false) {
                 setLoading(false);
-                setError(data.message);
+                setError(data?.message || "Sign up failed");
                 return;
             }
 

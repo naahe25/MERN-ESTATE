@@ -10,7 +10,7 @@ import path from "path";
 dotenv.config();
 
 mongoose
-  .connect(process.env.MONGO)
+  .connect(process.env.MONGO, { serverSelectionTimeoutMS: 5000 })
   .then(() => {
     console.log("Connected to MongoDB");
   })
@@ -24,13 +24,25 @@ const app = express();
 app.use(express.json());
 app.use(cookieParser());
 
+const requireDatabase = (req, res, next) => {
+  if (mongoose.connection.readyState !== 1) {
+    return res.status(503).json({
+      success: false,
+      statusCode: 503,
+      message: "Database is not connected. Check your MongoDB connection string.",
+    });
+  }
+
+  next();
+};
+
 app.listen(3000, () => {
   console.log("Server is running on port 3000");
 });
 
-app.use("/api/user", userRouter);
-app.use("/api/auth", authRouter);
-app.use("/api/listing", listingRouter);
+app.use("/api/user", requireDatabase, userRouter);
+app.use("/api/auth", requireDatabase, authRouter);
+app.use("/api/listing", requireDatabase, listingRouter);
 
 app.use(express.static(path.join(__dirname, "/client/dist")));
 

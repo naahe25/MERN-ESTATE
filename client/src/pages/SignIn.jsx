@@ -3,6 +3,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { signInStart, signInSuccess, signInFailure } from "../redux/user/userSlice.js";
 import OAuth from "../components/OAuth.jsx";
+import { parseApiResponse } from "../utils/apiResponse.js";
 
 const SignIn = () => {
 
@@ -29,11 +30,11 @@ const SignIn = () => {
                 },
                 body: JSON.stringify(formData),
             });
-            const data = await res.json();
+            const data = await parseApiResponse(res);
             console.log(data);
 
-            if (data.success == false) {
-                dispatch(signInFailure(data.message));
+            if (!res.ok || data?.success == false) {
+                dispatch(signInFailure(data?.message || "Sign in failed"));
                 return;
             }
 

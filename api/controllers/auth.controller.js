@@ -1,23 +1,37 @@
 import User from "../models/user.model.js";
-import bcryptjs from "bcryptjs";  
+import bcryptjs from "bcryptjs";
 import { errorHandler } from "../utils/error.js";
 import jwt from "jsonwebtoken";
 
 export const signup = async (req, res, next) => {
-  const { username, email, password } = req.body;
-  const hashedPassword = bcryptjs.hashSync(password, 10);
-  const newUser = new User({ username, email, password: hashedPassword });
   try {
+    const { username, email, password } = req.body;
+
+    if (!username || !email || !password) {
+      return next(errorHandler(400, "All fields are required"));
+    }
+
+    const hashedPassword = bcryptjs.hashSync(password, 10);
+    const newUser = new User({ username, email, password: hashedPassword });
     await newUser.save();
     res.status(201).json("User created successfully");
   } catch (error) {
+    if (error.code === 11000) {
+      return next(errorHandler(409, "Username or email already exists"));
+    }
+
     next(error);
   }
 };
 
 export const signin = async (req, res, next) => {
-  const { email, password } = req.body;
   try {
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+      return next(errorHandler(400, "Email and password are required"));
+    }
+
     const validUser = await User.findOne({ email });
     if (!validUser) return next(errorHandler(404, "User not found"));
 
@@ -38,7 +52,13 @@ export const signin = async (req, res, next) => {
 
 export const google = async (req, res, next) => {
   try {
-    const user = await User.findOne({ email: req.body.email });
+    const { name, email, photo } = req.body;
+
+    if (!email) {
+      return next(errorHandler(400, "Google account email is required"));
+    }
+
+    const user = await User.findOne({ email });
     if (user) {
       const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
       const { password: pass, ...rest } = user._doc;
@@ -55,11 +75,11 @@ export const google = async (req, res, next) => {
       const hashedPassword = bcryptjs.hashSync(generatedPassword, 10);
       const newUser = new User({
         username:
-          req.body.name.split(" ").join("").toLowerCase() +
+          (name || email.split("@")[0]).split(" ").join("").toLowerCase() +
           Math.random().toString(36).slice(-4),
-        email: req.body.email,
+        email,
         password: hashedPassword,
-        avatar: req.body.photo,
+        avatar: photo,
       });
 
       await newUser.save();
@@ -71,10 +91,7 @@ export const google = async (req, res, next) => {
         .json(rest);
     }
   } catch (error) {
-    // Ensure to return a JSON response on error
-    return res
-      .status(500)
-      .json({ success: false, message: "Internal Server Error" });
+    next(error);
   }
 };
 
