@@ -9,14 +9,18 @@ import path from "path";
 
 dotenv.config();
 
-mongoose
-  .connect(process.env.MONGO, { serverSelectionTimeoutMS: 5000 })
-  .then(() => {
-    console.log("Connected to MongoDB");
-  })
-  .catch((err) => {
-    console.log("Error: " + err);
-  });
+if (!process.env.MONGO) {
+  console.log("Error: Missing MONGO connection string");
+} else {
+  mongoose
+    .connect(process.env.MONGO, { serverSelectionTimeoutMS: 5000 })
+    .then(() => {
+      console.log("Connected to MongoDB");
+    })
+    .catch((err) => {
+      console.log("Error: " + err);
+    });
+}
 
 const __dirname = path.resolve();
 

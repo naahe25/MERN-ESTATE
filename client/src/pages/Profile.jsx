@@ -14,6 +14,7 @@ import {
 import { useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
 import axios from "axios"; // Import axios for HTTP requests
+import { getAvatarUrl, getUserInitial } from "../utils/avatar.js";
 
 const Profile = () => {
     const fileRef = useRef(null);
@@ -22,6 +23,7 @@ const Profile = () => {
     const [filePerc, setFilePerc] = useState(0);
     const [fileUploadError, setFileUploadError] = useState(false);
     const [formData, setFormData] = useState({});
+    const [avatarError, setAvatarError] = useState(false);
     const [updateSuccess, setUpdateSuccess] = useState(false);
     const [showListingsError, setShowListingsError] = useState(false);
     const [userListings, setUserListings] = useState([]);
@@ -43,7 +45,8 @@ const Profile = () => {
             );
 
             const imageUrl = res.data.secure_url; // Uploaded image URL
-            setFormData({ ...formData, photo: imageUrl });
+            setFormData({ ...formData, avatar: imageUrl });
+            setAvatarError(false);
             setFileUploadError(false);
             setFilePerc(100);
         } catch (error) {
@@ -149,6 +152,8 @@ const Profile = () => {
         }
     };
 
+    const avatarUrl = !avatarError ? getAvatarUrl(currentUser, formData.avatar) : "";
+
     return (
         <div className="p-3 max-w-lg mx-auto">
             <h1 className="text-3xl font-semibold text-center my-7">Profile</h1>
@@ -163,12 +168,23 @@ const Profile = () => {
                     hidden
                     accept="image/*"
                 />
-                <img
-                    onClick={() => fileRef.current.click()}
-                    src={formData.photo || currentUser.photo || currentUser.avatar}
-                    alt="profile"
-                    className="rounded-full h-24 w-24 object-cover cursor-pointer self-center mt-2"
-                />
+                {avatarUrl ? (
+                    <img
+                        onClick={() => fileRef.current.click()}
+                        src={avatarUrl}
+                        alt="profile"
+                        onError={() => setAvatarError(true)}
+                        className="rounded-full h-24 w-24 object-cover cursor-pointer self-center mt-2"
+                    />
+                ) : (
+                    <button
+                        type="button"
+                        onClick={() => fileRef.current.click()}
+                        className="rounded-full h-24 w-24 bg-slate-700 text-white cursor-pointer self-center mt-2 text-3xl font-semibold"
+                    >
+                        {getUserInitial(currentUser)}
+                    </button>
+                )}
                 <p className="text-sm self-center">
                     {fileUploadError ? (
                         <span className="text-red-700">{fileUploadError}</span>

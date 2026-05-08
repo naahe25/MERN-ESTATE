@@ -1,4 +1,9 @@
-import { GoogleAuthProvider, getAuth, signInWithPopup } from "firebase/auth";
+import {
+    GoogleAuthProvider,
+    getAdditionalUserInfo,
+    getAuth,
+    signInWithPopup,
+} from "firebase/auth";
 import { app } from "../firebase.js";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
@@ -17,9 +22,21 @@ const OAuth = () => {
         try {
             setError(null);
             const provider = new GoogleAuthProvider();
+            provider.addScope("profile");
+            provider.addScope("email");
+            provider.setCustomParameters({ prompt: "select_account" });
             const auth = getAuth(app);
             const result = await signInWithPopup(auth, provider);
             const user = result.user;
+            const googleProvider = user.providerData.find(
+                (provider) => provider.providerId === "google.com"
+            );
+            const additionalInfo = getAdditionalUserInfo(result);
+            const photo =
+                googleProvider?.photoURL ||
+                user.photoURL ||
+                additionalInfo?.profile?.picture ||
+                result._tokenResponse?.photoUrl;
 
             const res = await fetch("/api/auth/google", {
                 method: "POST",
@@ -29,7 +46,8 @@ const OAuth = () => {
                 body: JSON.stringify({
                     name: user.displayName,
                     email: user.email,
-                    photo: user.photoURL,
+                    photo,
+                    avatar: photo,
                 }),
             });
 

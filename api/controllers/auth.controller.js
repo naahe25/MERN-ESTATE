@@ -52,7 +52,8 @@ export const signin = async (req, res, next) => {
 
 export const google = async (req, res, next) => {
   try {
-    const { name, email, photo } = req.body;
+    const { name, email, photo, avatar } = req.body;
+    const googlePhoto = photo || avatar;
 
     if (!email) {
       return next(errorHandler(400, "Google account email is required"));
@@ -60,8 +61,16 @@ export const google = async (req, res, next) => {
 
     const user = await User.findOne({ email });
     if (user) {
-      const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
-      const { password: pass, ...rest } = user._doc;
+      const signedInUser =
+        googlePhoto && (user.avatar !== googlePhoto || user.photo !== googlePhoto)
+          ? await User.findByIdAndUpdate(
+              user._id,
+              { $set: { avatar: googlePhoto, photo: googlePhoto } },
+              { new: true },
+            )
+          : user;
+      const token = jwt.sign({ id: signedInUser._id }, process.env.JWT_SECRET);
+      const { password: pass, ...rest } = signedInUser._doc;
       return res
         .cookie("access_token", token, { httpOnly: true })
         .status(200)
@@ -79,7 +88,7 @@ export const google = async (req, res, next) => {
           Math.random().toString(36).slice(-4),
         email,
         password: hashedPassword,
-        avatar: photo,
+        ...(googlePhoto ? { avatar: googlePhoto, photo: googlePhoto } : {}),
       });
 
       await newUser.save();
