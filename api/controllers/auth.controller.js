@@ -3,6 +3,24 @@ import bcryptjs from "bcryptjs";
 import { errorHandler } from "../utils/error.js";
 import jwt from "jsonwebtoken";
 
+const getGoogleProfile = async (accessToken) => {
+  if (!accessToken) return null;
+
+  try {
+    const res = await fetch("https://www.googleapis.com/oauth2/v3/userinfo", {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    if (!res.ok) return null;
+
+    return await res.json();
+  } catch (error) {
+    return null;
+  }
+};
+
 export const signup = async (req, res, next) => {
   try {
     const { username, email, password } = req.body;
@@ -52,14 +70,17 @@ export const signin = async (req, res, next) => {
 
 export const google = async (req, res, next) => {
   try {
-    const { name, email, photo, avatar } = req.body;
-    const googlePhoto = photo || avatar;
+    const { name, email, photo, avatar, accessToken } = req.body;
+    const googleProfile = await getGoogleProfile(accessToken);
+    const googleEmail = googleProfile?.email || email;
+    const googleName = googleProfile?.name || name;
+    const googlePhoto = googleProfile?.picture || photo || avatar;
 
-    if (!email) {
+    if (!googleEmail) {
       return next(errorHandler(400, "Google account email is required"));
     }
 
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ email: googleEmail });
     if (user) {
       const signedInUser =
         googlePhoto && (user.avatar !== googlePhoto || user.photo !== googlePhoto)
@@ -84,9 +105,9 @@ export const google = async (req, res, next) => {
       const hashedPassword = bcryptjs.hashSync(generatedPassword, 10);
       const newUser = new User({
         username:
-          (name || email.split("@")[0]).split(" ").join("").toLowerCase() +
+          (googleName || googleEmail.split("@")[0]).split(" ").join("").toLowerCase() +
           Math.random().toString(36).slice(-4),
-        email,
+        email: googleEmail,
         password: hashedPassword,
         ...(googlePhoto ? { avatar: googlePhoto, photo: googlePhoto } : {}),
       });

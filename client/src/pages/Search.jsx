@@ -14,7 +14,7 @@ import {
 import { useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
 import axios from "axios"; // Import axios for HTTP requests
-import { getAvatarUrl, getUserInitial } from "../utils/avatar.js";
+import { DEFAULT_AVATAR, getAvatarUrl } from "../utils/avatar.js";
 
 const Profile = () => {
     const fileRef = useRef(null);
@@ -152,7 +152,9 @@ const Profile = () => {
         }
     };
 
-    const avatarUrl = !avatarError ? getAvatarUrl(currentUser, formData.avatar) : "";
+    const avatarUrl = avatarError
+        ? DEFAULT_AVATAR
+        : getAvatarUrl(currentUser, formData.avatar);
 
     return (
         <div className="p-3 max-w-lg mx-auto">
@@ -168,23 +170,13 @@ const Profile = () => {
                     hidden
                     accept="image/*"
                 />
-                {avatarUrl ? (
-                    <img
-                        onClick={() => fileRef.current.click()}
-                        src={avatarUrl}
-                        alt="profile"
-                        onError={() => setAvatarError(true)}
-                        className="rounded-full h-24 w-24 object-cover cursor-pointer self-center mt-2"
-                    />
-                ) : (
-                    <button
-                        type="button"
-                        onClick={() => fileRef.current.click()}
-                        className="rounded-full h-24 w-24 bg-slate-700 text-white cursor-pointer self-center mt-2 text-3xl font-semibold"
-                    >
-                        {getUserInitial(currentUser)}
-                    </button>
-                )}
+                <img
+                    onClick={() => fileRef.current.click()}
+                    src={avatarUrl}
+                    alt="profile"
+                    onError={() => setAvatarError(true)}
+                    className="rounded-full h-24 w-24 object-cover cursor-pointer self-center mt-2"
+                />
                 <p className="text-sm self-center">
                     {fileUploadError ? (
                         <span className="text-red-700">{fileUploadError}</span>

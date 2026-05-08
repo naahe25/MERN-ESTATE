@@ -2,14 +2,14 @@ import { FaSearch } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { useEffect, useState } from "react";
-import { getAvatarUrl, getUserInitial } from "../utils/avatar.js";
+import { DEFAULT_AVATAR, getAvatarUrl } from "../utils/avatar.js";
 
 const Header = () => {
     const { currentUser } = useSelector((state) => state.user);
     const [searchTerm, setSearchTerm] = useState("");
     const [avatarError, setAvatarError] = useState(false);
     const navigate = useNavigate();
-    const avatarUrl = !avatarError ? getAvatarUrl(currentUser) : "";
+    const avatarUrl = avatarError ? DEFAULT_AVATAR : getAvatarUrl(currentUser);
 
     const handleSubmit = (e) => {
 
@@ -71,17 +71,13 @@ const Header = () => {
                     </Link>
 
                     <Link to="/profile">
-                        {currentUser && avatarUrl ? (
+                        {currentUser ? (
                             <img
                                 src={avatarUrl}
                                 alt="avatar"
                                 onError={() => setAvatarError(true)}
                                 className="rounded-full h-7 w-7 object-cover"
                             />
-                        ) : currentUser ? (
-                            <div className="rounded-full h-7 w-7 bg-slate-700 text-white flex items-center justify-center text-xs font-semibold">
-                                {getUserInitial(currentUser)}
-                            </div>
                         ) : (
                             <li className="text-slate-700 hover:underline">Sign In</li>
                         )}

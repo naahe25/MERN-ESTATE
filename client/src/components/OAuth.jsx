@@ -18,6 +18,25 @@ const OAuth = () => {
     const navigate = useNavigate();
     const [error, setError] = useState(null);
 
+    const getGoogleProfilePhoto = async (accessToken) => {
+        if (!accessToken) return null;
+
+        try {
+            const res = await fetch("https://www.googleapis.com/oauth2/v3/userinfo", {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                },
+            });
+
+            if (!res.ok) return null;
+
+            const profile = await res.json();
+            return profile.picture || null;
+        } catch (error) {
+            return null;
+        }
+    };
+
     const handleGoogleClick = async () => {
         try {
             setError(null);
@@ -28,15 +47,21 @@ const OAuth = () => {
             const auth = getAuth(app);
             const result = await signInWithPopup(auth, provider);
             const user = result.user;
+            const credential = GoogleAuthProvider.credentialFromResult(result);
             const googleProvider = user.providerData.find(
                 (provider) => provider.providerId === "google.com"
             );
             const additionalInfo = getAdditionalUserInfo(result);
+            const fetchedGooglePhoto = await getGoogleProfilePhoto(
+                credential?.accessToken
+            );
             const photo =
+                fetchedGooglePhoto ||
+                additionalInfo?.profile?.picture ||
+                result._tokenResponse?.photoUrl ||
                 googleProvider?.photoURL ||
                 user.photoURL ||
-                additionalInfo?.profile?.picture ||
-                result._tokenResponse?.photoUrl;
+                null;
 
             const res = await fetch("/api/auth/google", {
                 method: "POST",
@@ -48,6 +73,7 @@ const OAuth = () => {
                     email: user.email,
                     photo,
                     avatar: photo,
+                    accessToken: credential?.accessToken,
                 }),
             });
 
@@ -57,7 +83,10 @@ const OAuth = () => {
                 throw new Error(data?.message || "Failed to sign in with Google");
             }
 
-            dispatch(signInSuccess(data));
+            dispatch(signInSuccess({
+                ...data,
+                ...(photo ? { avatar: photo, photo } : {}),
+            }));
             navigate("/");
         } catch (error) {
             setError(error.message);
