@@ -13,10 +13,14 @@ const getGoogleProfile = async (accessToken) => {
       },
     });
 
-    if (!res.ok) return null;
+    if (!res.ok) {
+      console.warn(`Google API returned status ${res.status}:`, res.statusText);
+      return null;
+    }
 
     return await res.json();
   } catch (error) {
+    console.warn("Error fetching Google profile:", error.message);
     return null;
   }
 };

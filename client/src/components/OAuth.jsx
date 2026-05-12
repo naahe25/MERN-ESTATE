@@ -28,11 +28,15 @@ const OAuth = () => {
                 },
             });
 
-            if (!res.ok) return null;
+            if (!res.ok) {
+                console.warn(`Google API returned status ${res.status}:`, res.statusText);
+                return null;
+            }
 
             const profile = await res.json();
             return profile.picture || null;
         } catch (error) {
+            console.warn("Error fetching Google profile photo:", error.message);
             return null;
         }
     };
@@ -62,6 +66,15 @@ const OAuth = () => {
                 googleProvider?.photoURL ||
                 user.photoURL ||
                 null;
+
+            console.log("Google Sign-In Profile Photo:", {
+                fetchedGooglePhoto,
+                additionalInfoPicture: additionalInfo?.profile?.picture,
+                tokenResponsePhotoUrl: result._tokenResponse?.photoUrl,
+                providerPhotoURL: googleProvider?.photoURL,
+                userPhotoURL: user.photoURL,
+                finalPhoto: photo,
+            });
 
             const res = await fetch("/api/auth/google", {
                 method: "POST",
