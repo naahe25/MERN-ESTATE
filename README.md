@@ -47,6 +47,7 @@ npm i mongoose
 npm install @reduxjs/toolkit react-redux
 npm i redux-persist
 npm install firebase
+npm install swiper
 ```
 
 ### 6. Installing (Mern-estate folder)
@@ -80,6 +81,7 @@ npm run dev
 - **Redux Persist** - State persistence
 - **React Icons** - Icon library
 - **Firebase** - Authentication & backend services
+- **Swiper** - Modern touch slider
 
 ### Backend
 - **Node.js** - Runtime environment
@@ -144,31 +146,46 @@ PORT=3000
 - Secure JWT-based authentication
 - Firebase integration for modern auth flows
 - Password hashing with BCryptJS
+- Persistent user sessions with Redux
 
 🏘️ **Property Management**
 - Create, read, update, and delete property listings
 - MongoDB-powered data persistence
 - Real-time data updates with Redux
+- Advanced search and filtering capabilities
+- Property categorization (offers, rentals, sales)
 
 🎨 **Modern UI/UX**
 - Responsive design with Tailwind CSS
 - Icon library integration with React Icons
 - Smooth routing and navigation with React Router
+- Interactive image carousel with Swiper
+- Clean and intuitive user interface
 
 📱 **State Management**
 - Redux Toolkit for predictable state management
 - Redux Persist for localStorage persistence
 - Seamless async operations with Redux middleware
+- Efficient component re-rendering
 
 🔐 **Security**
 - Secure API endpoints with JWT authentication
 - Password encryption with BCryptJS
 - Environment variable protection with Dotenv
+- Secure Firebase authentication
 
 ⚡ **Performance**
 - Fast development server with Vite
 - Optimized production builds
 - Efficient module loading
+- Lazy-loaded components and images
+- API response caching
+
+🖼️ **Listings Display**
+- Featured property carousel on homepage
+- Property cards with images and details
+- Multiple listing categories (offers, rentals, sales)
+- Image galleries for each property
 
 ---
 
